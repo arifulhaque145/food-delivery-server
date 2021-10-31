@@ -31,7 +31,7 @@ client.connect((err) => {
     const result = await userCollection.find({}).toArray();
     res.json(result);
   });
-  
+
   // LOAD PRODUCTS API
   app.get("/products", async (req, res) => {
     const result = await productCollection.find({}).toArray();
@@ -53,15 +53,22 @@ client.connect((err) => {
     const updatedUser = req.body;
     const filter = { _id: ObjectId(id) };
     const options = { upsert: true };
-    const updateDoc = {
-      $set: {
-        name: updatedUser.name,
-        email: updatedUser.email,
-      },
-    };
-    const result = await userCollection.updateOne(filter, updateDoc, options);
+    const result = await userCollection.updateOne(
+      {},
+      { $set: { cart: updatedUser } },
+      false,
+      true
+    );
+    // console.log(updatedUser);
+    // const updateDoc = {
+    //   $set: {
+    //     {"cart": `${updatedUser.name}`},
+    //   },
+    // };
+    // console.log(updatedUser);
+    // const result = await userCollection.updateOne(filter, updateDoc, options);
+    // res.json(result);
     // console.log("Updating user", updatedUser);
-    res.json(result);
   });
 
   // DELETE API
