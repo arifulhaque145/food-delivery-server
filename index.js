@@ -38,37 +38,36 @@ client.connect((err) => {
     res.json(result);
   });
 
+  // LOAD PRODUCTS WITH ID API
+  app.get("/products/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) };
+    const result = await productCollection.findOne(query);
+    res.json(result);
+  });
+
   // LOAD USER WITH ID API
   app.get("/users/:id", async (req, res) => {
     const id = req.params.id;
     const query = { _id: ObjectId(id) };
     const result = await userCollection.findOne(query);
-    // console.log("load user id", id);
     res.send(result);
   });
 
   // UPDATE USER API
+  let newList = [];
   app.put("/users/:id", async (req, res) => {
     const id = req.params.id;
     const updatedUser = req.body;
-    const filter = { _id: ObjectId(id) };
-    const options = { upsert: true };
+    // console.log([...updatedUser.cart]);
+    newList.push(updatedUser.cart);
     const result = await userCollection.updateOne(
       {},
-      { $set: { cart: updatedUser } },
+      { $set: { cart: [...updatedUser.cart] } },
       false,
       true
     );
-    // console.log(updatedUser);
-    // const updateDoc = {
-    //   $set: {
-    //     {"cart": `${updatedUser.name}`},
-    //   },
-    // };
-    // console.log(updatedUser);
-    // const result = await userCollection.updateOne(filter, updateDoc, options);
-    // res.json(result);
-    // console.log("Updating user", updatedUser);
+    res.send(result);
   });
 
   // DELETE API
