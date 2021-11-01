@@ -18,12 +18,21 @@ const client = new MongoClient(uri, {
 client.connect((err) => {
   const userCollection = client.db("delevery_db").collection("users");
   const productCollection = client.db("delevery_db").collection("products");
+  const orderCollection = client.db("delevery_db").collection("orders");
 
   // INSERT TO DB
   app.post("/users", async (req, res) => {
     const newUser = req.body;
     const result = await userCollection.insertOne(newUser);
     res.send(result);
+  });
+
+  // INSERT TO DB
+  app.post("/orders", async (req, res) => {
+    const newOrder = req.body;
+    console.log(newOrder);
+    // const result = await orderCollection.insertOne(newUser);
+    // res.send(result);
   });
 
   // LOAD USERS API
@@ -57,9 +66,20 @@ client.connect((err) => {
   // UPDATE USER API
   let newList = [];
   app.put("/users/:id", async (req, res) => {
-    const id = req.params.id;
     const updatedUser = req.body;
-    // console.log([...updatedUser.cart]);
+    newList.push(updatedUser.cart);
+    const result = await userCollection.updateOne(
+      {},
+      { $set: { cart: [...newList] } },
+      false,
+      true
+    );
+    res.send(result);
+  });
+
+  // UPDATE USER API
+  app.put("/userss/:id", async (req, res) => {
+    const updatedUser = req.body;
     newList.push(updatedUser.cart);
     const result = await userCollection.updateOne(
       {},
