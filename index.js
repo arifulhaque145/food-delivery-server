@@ -27,12 +27,33 @@ client.connect((err) => {
     res.send(result);
   });
 
+  // GET FROM DB
+  app.get("/orders/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = { email: id };
+    const result = await orderCollection.find(query).toArray();
+    res.send(result);
+  });
+
+  // GET FROM DB
+  app.get("/orders", async (req, res) => {
+    const result = await orderCollection.find({}).toArray();
+    res.send(result);
+  });
+
   // INSERT TO DB
   app.post("/orders", async (req, res) => {
     const newOrder = req.body;
-    console.log(newOrder);
-    // const result = await orderCollection.insertOne(newUser);
-    // res.send(result);
+    const result = await orderCollection.insertOne(newOrder);
+    res.send(result);
+  });
+
+  // DELETE FROM DB
+  app.delete("/orders/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) };
+    const result = await orderCollection.deleteOne(query);
+    res.send(result);
   });
 
   // LOAD USERS API
