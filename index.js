@@ -41,6 +41,16 @@ client.connect((err) => {
     res.send(result);
   });
 
+  // UPDATE STATUS FROM DB
+  app.put("/orders/:id", async (req, res) => {
+    const id = req.params.id;
+    const filter = { _id: ObjectId(id) };
+    const options = { upsert: true };
+    const updateDoc = { $set: { status: "approved" } };
+    const result = await orderCollection.updateOne(filter, updateDoc, options);
+    res.json(result);
+  });
+
   // INSERT TO DB
   app.post("/orders", async (req, res) => {
     const newOrder = req.body;
@@ -73,6 +83,20 @@ client.connect((err) => {
     const id = req.params.id;
     const query = { _id: ObjectId(id) };
     const result = await productCollection.findOne(query);
+    res.json(result);
+  });
+
+  // LOAD PRODUCTS WITH ID API
+  app.put("/products", async (req, res) => {
+    const item = req.body;
+    const filter = { name: item.name };
+    const options = { upsert: true };
+    const updateDoc = { $set: item };
+    const result = await productCollection.updateOne(
+      filter,
+      updateDoc,
+      options
+    );
     res.json(result);
   });
 
